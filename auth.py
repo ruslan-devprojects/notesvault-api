@@ -20,7 +20,9 @@ def verify_password(password: str, hashed_password: str) -> bool:
     return pwd_context.verify(password, hashed_password)
 
 # JWT config (we'll move SECRET_KEY to env vars in deployment step)
-SECRET_KEY = "CHANGE_ME_TO_A_RANDOM_SECRET"
+import os
+
+SECRET_KEY = os.getenv("SECRET_KEY", "CHANGE_ME_TO_A_RANDOM_SECRET")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
