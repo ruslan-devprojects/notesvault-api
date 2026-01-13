@@ -44,8 +44,16 @@ class NoteOut(BaseModel):
     class Config:
         from_attributes = True
 
-@app.get("/health")
+@app.get("/")
+def root():
+    return {"service": "NotesVault API", "status": "ok"}
+
+.get("/health")
 def health():
+    return {"status": "ok"}
+
+.get("/healthz")
+def healthz():
     return {"status": "ok"}
 
 @app.post("/auth/register", response_model=UserOut)
