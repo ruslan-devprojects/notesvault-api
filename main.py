@@ -5,9 +5,15 @@ from sqlalchemy.orm import Session
 
 from db import Base, engine, SessionLocal
 from models import User, Note
-from auth import hash_password, verify_password, create_access_token, get_current_user, get_user_by_email
+from auth import (
+    hash_password,
+    verify_password,
+    create_access_token,
+    get_current_user,
+    get_user_by_email,
+)
 
-app = FastAPI(title="NotesVault API", version="0.4.0")
+app = FastAPI(title="NotesVault API", version="0.5.0")
 
 Base.metadata.create_all(bind=engine)
 
@@ -18,6 +24,20 @@ def get_db():
     finally:
         db.close()
 
+# --- Basic endpoints used by platform health checks ---
+@app.get("/")
+def root():
+    return {"service": "NotesVault API", "status": "ok"}
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+@app.get("/healthz")
+def healthz():
+    return {"status": "ok"}
+
+# --- Schemas ---
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
@@ -44,18 +64,7 @@ class NoteOut(BaseModel):
     class Config:
         from_attributes = True
 
-@app.get("/")
-def root():
-    return {"service": "NotesVault API", "status": "ok"}
-
-.get("/health")
-def health():
-    return {"status": "ok"}
-
-.get("/healthz")
-def healthz():
-    return {"status": "ok"}
-
+# --- Auth routes ---
 @app.post("/auth/register", response_model=UserOut)
 def register(payload: UserCreate, db: Session = Depends(get_db)):
     existing = get_user_by_email(db, payload.email)
@@ -83,6 +92,7 @@ def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get
     token = create_access_token(subject=user.email)
     return {"access_token": token, "token_type": "bearer"}
 
+# --- Notes routes (protected) ---
 @app.post("/notes", response_model=NoteOut)
 def create_note(
     payload: NoteCreate,
