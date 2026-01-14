@@ -6,9 +6,16 @@ DEFAULT_DB_URL = "sqlite:///./notesvault.db"
 
 DATABASE_URL = os.getenv("DATABASE_URL", DEFAULT_DB_URL)
 
+# Clean up common copy/paste issues from dashboards
+DATABASE_URL = DATABASE_URL.strip().strip('"').strip("'")
+
 # Normalize scheme for SQLAlchemy
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+# If using psycopg v3 explicitly, this also works:
+# postgresql+psycopg://user:pass@host/dbname
+# (postgresql://... is fine too)
 
 engine = create_engine(
     DATABASE_URL,
