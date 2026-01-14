@@ -8,3 +8,5 @@ python-multipart
 bcrypt==3.2.2
 
 psycopg[binary]
+
+psycopg2-binary
