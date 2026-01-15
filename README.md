@@ -1,11 +1,17 @@
 # NotesVault API
 
-🚀 Live demo: https://notesvault-api.onrender.com
+NotesVault is a small full-stack application that allows users to register, log in, and manage private notes.  
+Each user can only access their own notes via secure authentication.
 
-NotesVault is a backend REST API that allows users to register, authenticate, and manage private notes.  
-Each user can only access their own data.
+This project is built as a **portfolio-quality backend + frontend system**, focusing on real-world engineering practices rather than UI polish.
 
-This project was built as a **portfolio project** to demonstrate real-world backend development and deployment practices.
+---
+
+## Live Demo
+
+- Backend API: https://notesvault-api.onrender.com
+- API Docs (Swagger): https://notesvault-api.onrender.com/docs
+- Frontend (local): http://localhost:5173
 
 ---
 
@@ -13,89 +19,106 @@ This project was built as a **portfolio project** to demonstrate real-world back
 
 - User registration and login
 - JWT-based authentication (OAuth2 password flow)
-- Protected endpoints
-- User-scoped data access
-- PostgreSQL database
-- Dockerized application
-- CI pipeline with GitHub Actions
-- Cloud deployment with health checks
+- Protected API endpoints
+- User-scoped note access
+- Persistent storage with PostgreSQL
+- Health check endpoints
+- Dockerized backend
+- Cloud deployment (Render + Neon)
+- Simple React frontend
 
 ---
 
 ## Tech Stack
 
+### Backend
 - Python
 - FastAPI
 - SQLAlchemy
-- PostgreSQL
-- JWT (OAuth2)
+- PostgreSQL (Neon)
+- JWT authentication
 - Docker
-- GitHub Actions
-- Render (deployment)
+- Uvicorn
+
+### Frontend
+- React
+- Vite
+- Fetch API
+- LocalStorage for auth token
+
+### Infrastructure
+- Render (API hosting)
+- Neon (PostgreSQL)
+- GitHub (source control)
 
 ---
 
-## Live API
+## Architecture Overview
 
-The API is deployed and publicly accessible.
-
-- Health check endpoint  
-  `GET /healthz`
-
-- Interactive API documentation (Swagger UI)  
-  `GET /docs`
-
-Using Swagger, you can:
-1. Register a new user
-2. Log in with email and password
-3. Authorize using the Bearer token
-4. Create new notes
-5. List your existing notes
+- The backend is **stateless**
+- Authentication is handled using **JWT bearer tokens**
+- User identity is resolved on every request via dependency injection
+- All persistent data is stored in **PostgreSQL**
+- Secrets are injected via **environment variables**
+- A `/healthz` endpoint is included for cloud health checks
+- Frontend communicates with the API over HTTPS
 
 ---
 
-## Running Locally with Docker
+## Running the Backend Locally (Docker)
 
 ### Prerequisites
 - Docker installed and running
 
-### Build the Docker image
-
-### bash
+### Build the image
+```bash
 docker build -t notesvault-api .
----
 
- Project Purpose
+
+Runnning the container
+
+docker run -p 8000:8000 notesvault-api
+
+The API will be available at:
+	•	http://127.0.0.1:8000/healthz
+	•	http://127.0.0.1:8000/docs
+
+Note: When running locally without an external database, the app uses SQLite by default.
+
+⸻
+
+Running the Frontend Locally
+
+cd notesvault-web
+npm install
+npm run dev
+
+Frontend will be available at:
+	•	http://localhost:5173
+
+⸻
+
+Environment Variables (Backend)
+
+Variable Description
+DATABASE_URL = PostgreSQL connection string
+SECRET_KEY = JWT signing secret
+ALGORITHM = JWT algorithm (HS256)
+ACCESS_TOKEN_EXPIRE_MINUTES = Token expiration
+
+Secrets are never committed to the repository.
+
+⸻
+
+Project Purpose
 
 This project was created to practice and demonstrate:
 	•	REST API design
 	•	Authentication and authorization
 	•	Secure password handling
-	•	Dependency injection and request lifecycle
-	•	Database integration with PostgreSQL
-	•	Containerization using Docker
-	•	Continuous integration pipelines
-	•	Cloud deployment and environment configuration
+	•	Dependency injection
+	•	Database integration
+	•	Cloud deployment workflows
+	•	Environment configuration
 	•	Debugging real-world deployment issues
-
-⸻
-
- Architecture Overview
-	•	The application is stateless.
-	•	Authentication is handled using JWT tokens.
-	•	All persistent data is stored in PostgreSQL.
-	•	Secrets are injected via environment variables.
-	•	Health check endpoints are included for cloud platform compatibility.
-
-⸻
-
-Notes
-	•	Database credentials and secrets are not committed to the repository.
-	•	The application can be redeployed without data loss when connected to an external database.
-	•	The project intentionally focuses on backend and deployment concerns rather than frontend UI.
-
-⸻
-
-Status
-
-This project is considered complete and maintained as a portfolio reference.
+	•	Frontend ↔ backend integration
